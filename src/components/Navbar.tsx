@@ -12,11 +12,6 @@ const Navbar = async () => {
 	const { data, error  } = await supabase.auth.getUser();
 	const user = data?.user;
     
-
-    const signOut = async () => {
-        await supabase.auth.signOut();
-    }
-
     return (
 		<nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b bg-background/50 backdrop-blur-lg transition-all">
 			<MaxwidthWrapper>

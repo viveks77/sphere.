@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/common/ThemeProvider";
 import Navbar from "@/components/Navbar";
+import { TRPCReactProvider } from "@/trpc/react";
 
 const fontSans = Inter({
 	subsets: ["latin"],
@@ -23,10 +24,12 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={cn("antialiased grainy", fontSans.variable)}>
-				<ThemeProvider attribute="class" defaultTheme="system">
-					<Navbar />
-					{children}
-				</ThemeProvider>
+				<TRPCReactProvider>
+					<ThemeProvider attribute="class" defaultTheme="system">
+						<Navbar />
+						{children}
+					</ThemeProvider>
+				</TRPCReactProvider>
 			</body>
 		</html>
 	);
