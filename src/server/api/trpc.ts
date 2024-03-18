@@ -6,9 +6,11 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { db } from "../db/db";
+import { getUser } from "@/lib/supabase/server";
 
 /**
  * 1. CONTEXT
@@ -23,9 +25,11 @@ import { ZodError } from "zod";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  return {
-    ...opts,
-  };
+	return {
+		...opts,
+		db,
+		user: await getUser(),
+	};
 };
 
 /**
@@ -36,17 +40,16 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * errors on the backend.
  */
 const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
+	transformer: superjson,
+	errorFormatter({ shape, error }) {
+		return {
+			...shape,
+			data: {
+				...shape.data,
+				zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+			},
+		};
+	},
 });
 
 /**
@@ -78,3 +81,22 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+
+const middleware = t.middleware;
+
+const isAuthenticated = middleware(async ({ ctx, next }) => {
+	const user = ctx.user;
+	if (!user) {
+		throw new TRPCError({
+			code: "UNAUTHORIZED",
+		});
+	}
+
+	return next({
+		ctx: {
+			user: ctx.user,
+		},
+	});
+});
+
+export const privateProcedure = t.procedure.use(isAuthenticated);
