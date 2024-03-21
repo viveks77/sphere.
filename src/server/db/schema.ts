@@ -12,3 +12,5 @@ export const file = pgTable('file', {
     createdAt: timestamp('created_at').notNull().defaultNow(),
     userId: uuid('user_id').notNull(),
 })
+
+export type fileType = typeof file.$inferSelect;

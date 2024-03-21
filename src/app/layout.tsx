@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/common/ThemeProvider";
 import Navbar from "@/components/Navbar";
 import { TRPCReactProvider } from "@/trpc/react";
+import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = Inter({
 	subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
 					<ThemeProvider attribute="class" defaultTheme="system">
 						<Navbar />
 						{children}
+						<Toaster />
 					</ThemeProvider>
 				</TRPCReactProvider>
 			</body>
