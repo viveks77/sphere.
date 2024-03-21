@@ -22,7 +22,7 @@ const UploadDropzone = () => {
 			const file = files[0];
 			if(!file){
 				toast({
-					vairant: "destructive",
+					variant: "destructive",
 					title: "File upload failed",
 					description: "Something went wrong. Please try again later"
 				})
@@ -31,7 +31,7 @@ const UploadDropzone = () => {
 		},
 		onUploadError: (error) => {
 			toast({
-				vairant: "destructive",
+				variant: "destructive",
 				title: "File upload failed",
 				description: "Something went wrong. Please try again later"
 			})
