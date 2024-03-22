@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/common/ThemeProvider";
 import Navbar from "@/components/Navbar";
 import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "@/components/ui/toaster";
+import NextTopLoader from 'nextjs-toploader';
+import "simplebar-react/dist/simplebar.min.css";
 
 const fontSans = Inter({
 	subsets: ["latin"],
@@ -27,6 +29,7 @@ export default function RootLayout({
 			<body className={cn("antialiased grainy", fontSans.variable)}>
 				<TRPCReactProvider>
 					<ThemeProvider attribute="class" defaultTheme="system">
+						<NextTopLoader />
 						<Navbar />
 						{children}
 						<Toaster />
