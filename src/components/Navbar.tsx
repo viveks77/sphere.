@@ -1,4 +1,5 @@
 
+
 import React from "react";
 import MaxwidthWrapper from "./common/MaxwidthWrapper";
 import Link from "next/link";
@@ -21,9 +22,6 @@ const Navbar = async () => {
 					</Link>
 					<div className="hidden items-center space-x-4 sm:flex">
 						<>
-							<Link href="/pricing" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-								Pricing
-							</Link>
 							{ user ? <LogoutButton />:
 								<Link className={buttonVariants({ variant: "ghost", size: "sm" })} href="/login">
 									Sign in

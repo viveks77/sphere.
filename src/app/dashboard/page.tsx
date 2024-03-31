@@ -10,7 +10,7 @@ import FileCard from "@/components/common/FileCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
-	const {data: files, isLoading} = api.file.getUserFiles.useQuery();
+	const {data: files, isLoading} = api.file.getUserFiles.useQuery(undefined, {refetchOnWindowFocus: false})
 	
 	return (
 		<main className="mx-auto max-w-7xl md:p-10">
