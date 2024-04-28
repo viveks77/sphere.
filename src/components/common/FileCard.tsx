@@ -36,7 +36,6 @@ const FileCard = ({ file }: Props) => {
 			}
 		},
 		onSuccess: (data) => {
-			console.log(data);
 			utils.file.getUserFiles.invalidate();
 			toast({
 				title: "File deleted",

@@ -103,7 +103,6 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
 						pageParams: []
 					}
 				}
-				console.log("oldData", oldData);
 				let pages = [...oldData.pages];
 				let newPage = pages[0];
 				newPage = [

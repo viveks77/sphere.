@@ -37,7 +37,6 @@ export const ourFileRouter = {
 				.returning();
 			
 			try{
-				console.log(fileResult[0].id);
 				const response = await fetch(f.url);
 				const blob = await response.blob();
 
@@ -66,7 +65,6 @@ export const ourFileRouter = {
 				}).where(eq(file.id, fileResult[0].id));
 
 			}catch(e){
-				console.log(e);
 				await db.update(file).set({
 					uploadStatus: "FAILED"
 				}).where(eq(file.id, fileResult[0].id));

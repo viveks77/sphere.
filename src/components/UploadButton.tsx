@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Button } from "./ui/button";
-import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2 } from "lucide-react";
-import { Progress } from "./ui/progress";
 import { useUploadThing } from "@/lib/uploadthing";
-import { useToast } from "./ui/use-toast";
-import { cn } from "@/lib/utils";
+import { Cloud, File, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Document, Page, pdfjs } from "react-pdf";
+import { useState } from "react";
+import Dropzone from "react-dropzone";
+import { pdfjs } from "react-pdf";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Progress } from "./ui/progress";
+import { useToast } from "./ui/use-toast";
 
 const UploadDropzone = () => {
 	const router = useRouter();
@@ -58,7 +57,6 @@ const UploadDropzone = () => {
 			multiple={false}
 			accept={{"application/pdf": [".pdf"]}}
 			onDrop={async (acceptedFile) => {
-				console.log(acceptedFile);
 				const data = await analysePdf(acceptedFile[0]);
 				if(data < 15){
 					await startUpload(acceptedFile);

@@ -23,12 +23,9 @@ export const DELETE = async (req: NextRequest) => {
 		let file: fileType | null = null;
 		file = await api.file.getUserFile({ id: String(id) });
 
-		console.log(file, id);
-
 		const uploadThing = new UTApi();
 
 		const { success } = await uploadThing.deleteFiles(file.key);
-        console.log(success);
 
 		if (!success) {
 			throw new Error("Failed to delete file");

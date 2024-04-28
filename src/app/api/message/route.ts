@@ -1,14 +1,14 @@
+import { model } from '@/lib/genAI';
+import { pineconeClient } from "@/lib/pinecone";
 import { createClient } from "@/lib/supabase/server";
 import { SendMessageValidator } from "@/lib/validators/sendMessageValidator";
 import { db } from "@/server/db/db";
 import { message } from "@/server/db/schema";
-import { pineconeClient } from "@/lib/pinecone";
-import { GoogleGenerativeAI, TaskType } from "@google/generative-ai";
+import { TaskType } from "@google/generative-ai";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { PineconeStore } from "@langchain/pinecone";
 import { and, asc } from "drizzle-orm";
 import { NextRequest } from "next/server";
-import {model} from '@/lib/genAI';
 
 
 export const POST = async (req: NextRequest) => {
@@ -61,10 +61,10 @@ export const POST = async (req: NextRequest) => {
     })
 
     const formattedMessages = previousMessages.map((msg) => ({
-        role: msg.isUserMessage ? "user" as const : "assistant" as const,
+        role: msg.isUserMessage ? "user" as const : "model" as const,
         content: msg.text
     }))
-
+    
     const chat = model.startChat({
         history: [ 
             {
@@ -75,8 +75,8 @@ export const POST = async (req: NextRequest) => {
                 
                 PREVIOUS CONVERSATION:
                 ${formattedMessages.map((message) => {
-                  if (message.role === 'user') return `User: ${message.content}\n`
-                  return `Assistant: ${message.content}\n`
+                  if (message.role === 'user') return `user: ${message.content}\n`
+                  return `model: ${message.content}\n`
                 })}
                 
                 \n----------------\n
@@ -88,15 +88,13 @@ export const POST = async (req: NextRequest) => {
             {
                 role: "model",
                 parts: [{text: "Okay"}],
-            },
+            },  
         ]
     });
 
     const result = await chat.sendMessage(messageString);
     const response = await result.response;
     const text = response.text();
-
-    // console.log(text);
 
     await db.insert(message).values({
         text,

@@ -1,21 +1,21 @@
 "use client";
 
+import useResizeObserverHook from "@/lib/hooks/useResizeObserverHook";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, ChevronUp, Loader2, RotateCw, Search } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { useToast } from "./ui/use-toast";
-import useResizeObserverHook from "@/lib/hooks/useResizeObserverHook";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import SimpleBar from "simplebar-react";
+import { z } from "zod";
 import PdfFullscreen from "./PdfFullscreen";
+import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Input } from "./ui/input";
+import { useToast } from "./ui/use-toast";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 type Props = {

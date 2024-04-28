@@ -1,11 +1,11 @@
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import useResizeObserverHook from "@/lib/hooks/useResizeObserverHook"
-import { useToast } from "./ui/use-toast"
-import { useRef, useState } from "react"
-import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog'
-import { Button } from "./ui/button"
 import { Expand, Loader2 } from "lucide-react"
-import SimpleBar from "simplebar-react"
+import { useRef, useState } from "react"
 import { Document, Page } from 'react-pdf'
+import SimpleBar from "simplebar-react"
+import { Button } from "./ui/button"
+import { useToast } from "./ui/use-toast"
 
 const PdfFullscreen = ({ fileUrl }: {fileUrl: string}) => {
     const [isOpen, setIsOpen] = useState(false)

@@ -13,10 +13,8 @@ const Messages = ({ fileId }: { fileId: string }) => {
 	useEffect(() => {
 		const observer = new IntersectionObserver((entries) => {
 			if (entries[0].isIntersecting) {
-				console.log("is intersected");
 				fetchNextPage();
 				if(ref.current){
-					console.log('unobserved');
 					observer.unobserve(ref.current);
 				}
 			}

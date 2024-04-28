@@ -1,13 +1,10 @@
 "use client";
 
 import UploadButton from "@/components/UploadButton";
-import { Button } from "@/components/ui/button";
-import { api } from "@/trpc/react";
-import { Plus, MessageSquare, Loader2, Trash, Ghost } from "lucide-react";
-import { format } from "date-fns";
-import Link from "next/link";
 import FileCard from "@/components/common/FileCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/trpc/react";
+import { Ghost } from "lucide-react";
 
 const Dashboard = () => {
 	const { data: files, isLoading } = api.file.getUserFiles.useQuery(undefined, { refetchOnWindowFocus: false });
