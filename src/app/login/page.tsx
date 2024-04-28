@@ -16,7 +16,7 @@ import { z } from "zod";
 
 const loginSchema = z.object({
 	email: z.string().email(),
-	password: z.string().min(4),
+	password: z.string().min(4, {message: "Password must be at least 4 characters"}),
 });
 
 export default function LoginPage() {
@@ -24,6 +24,7 @@ export default function LoginPage() {
 	const router = useRouter();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [buttonLoading, setButtonLoading] = useState<boolean>(false);
+	const [isSignup, setIsSignup] = useState<boolean>(false);
 
 	useEffect(() => {
 		(async () => {
@@ -46,13 +47,25 @@ export default function LoginPage() {
 
 	async function submit(values: z.infer<typeof loginSchema>) {
 		setButtonLoading(true);
-		const { error } = await supabase.auth.signInWithPassword(values);
 
-		if (error) {
-			console.log(error);
-			setButtonLoading(false);
-			return;
+		if(isSignup){
+			const {error} = await supabase.auth.signUp(values);
+			if (error) {
+				console.log(error);
+				form.setError("email", {
+					message: error.message
+				})
+				setButtonLoading(false);
+				return;
+			}
+		}else {
+			const { error } = await supabase.auth.signInWithPassword(values);
+			if (error) {
+				setButtonLoading(false);
+				return;
+			}
 		}
+
 		router.replace("/dashboard");
 		router.refresh();
 	}
@@ -66,8 +79,8 @@ export default function LoginPage() {
 			) : (
 				<Card className="mx-auto max-w-sm mt-[8rem]">
 					<CardHeader>
-						<CardTitle className="text-2xl">Login</CardTitle>
-						<CardDescription>Enter your email below to login to your account</CardDescription>
+						<CardTitle className="text-2xl">{isSignup ? "Register" : "Login"}</CardTitle>
+						<CardDescription>Enter your email below to {isSignup ? "register" : "login to"} your account</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<Form {...form}>
@@ -95,7 +108,7 @@ export default function LoginPage() {
 											<FormItem>
 												<FormLabel>Password</FormLabel>
 												<FormControl>
-													<Input placeholder="Enter your password" {...field} />
+													<Input type="password" placeholder="Enter your password" {...field} />
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -103,14 +116,14 @@ export default function LoginPage() {
 									)}
 								/>
 								<Button type="submit" className="w-full">
-									{buttonLoading ? <Loader2 className="mx-auto my-auto h-6 w-6 animate-spin" /> : "Login"}
+									{buttonLoading ? <Loader2 className="mx-auto my-auto h-6 w-6 animate-spin" /> : isSignup ? "Register" : "Login"}
 								</Button>
 							</form>
 						</Form>
 						<div className="mt-4 text-center text-sm">
-							Don&apos;t have an account?{" "}
-							<Link href="#" className="underline">
-								Sign up
+							{!isSignup ? "Don't have" : "Have" } an account?{" "}
+							<Link href="#" className="underline" onClick={() => setIsSignup(!isSignup)}>
+								{isSignup? "Login" : "Sign Up"}
 							</Link>
 						</div>
 					</CardContent>

@@ -60,7 +60,7 @@ const PdfRenderer = ({ url }: Props) => {
 	};
 
 	return (
-		<div className="w-full bg-background rounded-md shadow flex flex-col items-center">
+		<div className="w-full border-border border-2  bg-background rounded-md shadow flex flex-col items-center">
 			<div className="h-14 w-full border-b border-border flex items-center justify-between px-2">
 				<div className="flex items-center gap-1.5">
 					<Button
@@ -71,7 +71,7 @@ const PdfRenderer = ({ url }: Props) => {
 						}}
 						variant="ghost"
 						aria-label="previous page">
-						<ChevronDown className="h-4 w-4" />
+						<ChevronUp className="h-4 w-4" />
 					</Button>
 					<div className="flex items-center gap-1.5">
 						<Input
@@ -96,7 +96,7 @@ const PdfRenderer = ({ url }: Props) => {
 						}}
 						variant="ghost"
 						aria-label="next page">
-						<ChevronUp className="h-4 w-4" />
+						<ChevronDown className="h-4 w-4" />
 					</Button>
 				</div>
 				<div className="space-x-2">
@@ -122,8 +122,8 @@ const PdfRenderer = ({ url }: Props) => {
 					<PdfFullscreen fileUrl={url} />
 				</div>
 			</div>
-			<div className="flex-1 w-full max-h-screen">
-				<SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)]">
+			<div className="flex-1 w-full max-h-full">
+				<SimpleBar autoHide={false} className="max-h-[calc(100vh-11rem)]">
 					<div ref={ref}>
 						<Document
 							loading={

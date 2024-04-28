@@ -1,12 +1,19 @@
 "use client";
 
 import { type fileType } from "@/server/db/schema";
-import { format } from "date-fns";
-import { Plus, MessageSquare, Trash, Loader2 } from "lucide-react";
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import Link from "next/link";
 import { api } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
+import { formatDistanceStrict } from "date-fns";
+import { EllipsisVertical } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+import { Button } from "../ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useToast } from "../ui/use-toast";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 type Props = {
 	file: fileType;
@@ -14,15 +21,43 @@ type Props = {
 
 const FileCard = ({ file }: Props) => {
 	const utils = api.useUtils();
+	const { toast } = useToast();
+	const [isPdfPreviewLoaded, setIsPdfPreviewLoaded] = useState(false);
 
-	const { mutateAsync: deleteFile, isPending } = api.file.deleteFile.useMutation({
-		onError: (error) => {
-			console.log(error);
+	const { mutateAsync: deleteFile } = useMutation({
+		mutationFn: async ({ id }: { id: number }) => {
+			const response = await fetch("/api/file", {
+				method: "DELETE",
+				body: JSON.stringify({ id }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to delete file");
+			}
 		},
 		onSuccess: (data) => {
 			console.log(data);
 			utils.file.getUserFiles.invalidate();
+			toast({
+				title: "File deleted",
+				description: "File has been deleted",
+				variant: "default",
+			});
 		},
+		onError: (error) => {
+			toast({
+				title: "Error",
+				description: "Failed to delete file",
+				variant: "destructive",
+			});
+		},
+		onMutate: () => {
+			toast({
+				title: "Deleting file",
+				description: "This may take few seconds",
+				variant: "default"
+			})
+		}
 	});
 
 	const deleteRecord = async () => {
@@ -30,32 +65,57 @@ const FileCard = ({ file }: Props) => {
 	};
 
 	return (
-		<li className="border-border border-2 col-span-1 text-card-foreground rounded-lg bg-card shadow transition hover:shadow-lg">
-			<Link href={`/dashboard/${file.id}`} className="flex flex-col gap-2">
-				<div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
-					<div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
-					<div className="flex-1 truncate">
-						<div className="flex items-center space-x-3">
-							<h3 className="truncate text-lg font-medium">{file.name}</h3>
+		<li className="min-[500px]:w-[150px] sm:min-w-[200px] sm:max-w-[200px] md:max-w-[250px] md:min-w-[250px] mr-2 mb-2 border-border border-2 col-span-1 text-card-foreground rounded-lg bg-card overflow-hidden">
+			<div className="hidden sm:flex h-[140px] -mt-1 relative border-b-[1px] border-border overflow-hidden w-full justify-center items-center bg-muted">
+				<Document
+					loading={
+						<div className="">
+							<img className="w-auto h-auto" src="https://www.svgrepo.com/show/66745/pdf.svg" />
 						</div>
-					</div>
-				</div>
-			</Link>
+					}
+					onLoadSuccess={() => {
+						setIsPdfPreviewLoaded(true);
+					}}
+					onLoadError={() => {
+						setIsPdfPreviewLoaded(false);
+					}}
+					file={file.url}
+					className="max-h-full max-w-full mt-14">
+					{!isPdfPreviewLoaded ? (
+						<div className="">
+							<img src="https://www.svgrepo.com/show/66745/pdf.svg" />
+						</div>
+					) : (
+						<Page className="rounded-xl" width={200} pageNumber={1} scale={1} renderTextLayer={false} />
+					)}
+				</Document>
+			</div>
 
-			<div className="px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-6 text-xs text-muted-foreground">
-				<div className="flex items-center gap-2">
-					<Plus className="h-4 w-4" />
-					{format(new Date(file.createdAt), "MMM yyyy")}
+			<div className="pl-6 pr-2 py-4 flex items-center justify-between">
+				<div className="">
+					<Link href={`/dashboard/${file.id}`}>
+						<strong>{file?.name.split(".").slice(0, -1).join(".") ?? ""}</strong>
+					</Link>
+					<p className="mt-1 text-muted-foreground text-sm">
+						{formatDistanceStrict(new Date(file.createdAt), Date.now(), {
+							addSuffix: true,
+						})}
+					</p>
 				</div>
-
-				<div className="flex items-center gap-2">
-					<MessageSquare className="h-4 w-4" />
-					mocked
+				<div className="mx-2">
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" size="sm">
+								<EllipsisVertical size={18} />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="start">
+							<DropdownMenuItem className="text-red-500 outline-none" onClick={deleteRecord}>
+								Delete
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
-
-				<Button onClick={deleteRecord} size="sm" className="w-full" variant="destructive">
-					{isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash className="h-4 w-4" />}
-				</Button>
 			</div>
 		</li>
 	);
