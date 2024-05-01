@@ -11,6 +11,7 @@ export const file = pgTable('file', {
     key: text('key').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     userId: uuid('user_id').notNull(),
+    lastOpenedAt: timestamp('last_opened_at').notNull().defaultNow(),
 })
 
 export const message = pgTable('message', {

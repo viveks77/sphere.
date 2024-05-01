@@ -9,9 +9,8 @@ export default function Home() {
 			<h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl">
 				Chat with your <span className="text-blue-600">documents</span> in seconds.
 			</h1>
-			<p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
-				Sphere<span className="text-red-500">.</span> allows you to have conversations with any PDF document. Simply upload your file and start asking questions
-				right away.
+			<p className="mt-5 max-w-prose text-muted-foreground sm:text-lg">
+				Sphere<span className="text-red-500">.</span> enables seamless conversations with any PDF file. Just upload your document and dive into interactive discussions in seconds.
 			</p>
 			<Link className={buttonVariants({ size: "lg", className: "mt-5" })} href="/dashboard">
 				Get Started <ArrowRight className="ml-2 h-5 w-5" />

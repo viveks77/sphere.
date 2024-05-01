@@ -1,3 +1,4 @@
+import { pineconeClient } from "@/lib/pinecone";
 import { createClient } from "@/lib/supabase/server";
 import { fileType } from "@/server/db/schema";
 import { api } from "@/trpc/server";
@@ -24,12 +25,15 @@ export const DELETE = async (req: NextRequest) => {
 		file = await api.file.getUserFile({ id: String(id) });
 
 		const uploadThing = new UTApi();
+		const pineconeIndex = pineconeClient.index("pdfspace");
 
 		const { success } = await uploadThing.deleteFiles(file.key);
 
 		if (!success) {
 			throw new Error("Failed to delete file");
 		}
+
+		await pineconeIndex._deleteOne(file.id.toString());
 
 		await api.file.deleteFile({ id: String(id) });
 

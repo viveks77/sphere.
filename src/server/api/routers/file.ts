@@ -37,6 +37,10 @@ export const fileRouter = createTRPCRouter({
 			where: (file, { eq }) => and(eq(file.userId, user.id), eq(file.id, Number(id))),
 		});
 
+		await db.update(file).set({
+			lastOpenedAt: new Date()
+		}).where(and(eq(file.userId, user.id), eq(file.id, Number(id))));
+
 		if (!fileResult) {
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}

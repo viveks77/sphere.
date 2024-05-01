@@ -27,9 +27,11 @@ const UploadDropzone = () => {
 					description: "Something went wrong. Please try again later",
 				});
 			}
+			setIsUploading(false);
 			router.push(`/dashboard/${file.serverData.id}`);
 		},
 		onUploadError: (error) => {
+			setIsUploading(false);
 			toast({
 				variant: "destructive",
 				title: "File upload failed",
@@ -44,23 +46,24 @@ const UploadDropzone = () => {
 
 	const analysePdf = async (file: File) => {
 		const buffer = await file.arrayBuffer();
-		return pdfjs.getDocument(buffer).promise.then(doc => {
+		return pdfjs.getDocument(buffer).promise.then((doc) => {
 			return new Promise<number>((resolve, reject) => {
 				return resolve(doc.numPages);
-			})
+			});
 		});
-		
-	}
+	};
 
 	return (
 		<Dropzone
 			multiple={false}
-			accept={{"application/pdf": [".pdf"]}}
+			accept={{ "application/pdf": [".pdf"] }}
 			onDrop={async (acceptedFile) => {
+				setIsUploading(true);
 				const data = await analysePdf(acceptedFile[0]);
-				if(data < 15){
+				if (data < 15) {
 					await startUpload(acceptedFile);
-				}else{
+				} else {
+					setIsUploading(false);
 					toast({
 						variant: "destructive",
 						title: "File upload failed",
@@ -95,6 +98,10 @@ const UploadDropzone = () => {
 							{isUploading ? (
 								<div className="w-full mt-4 max-w-xs mx-auto">
 									<Progress value={uploadProgress} className="h-1 w-full bg-background" />
+									{uploadProgress === 0 && (<div className="flex gap-1 items-center justify-center text-sm text-muted-foreground text-center pt-2">
+										<Loader2 className="h-3 w-3 animate-spin" />
+										Analyzing...
+									</div>)}
 									{uploadProgress === 100 ? (
 										<div className="flex gap-1 items-center justify-center text-sm text-muted-foreground text-center pt-2">
 											<Loader2 className="h-3 w-3 animate-spin" />
@@ -122,8 +129,7 @@ const UploadButton = () => {
 				if (!v) {
 					setIsOpen(v);
 				}
-			}}
-			>
+			}}>
 			<DialogTrigger onClick={() => setIsOpen(true)} asChild>
 				<Button>Upload PDF</Button>
 			</DialogTrigger>
