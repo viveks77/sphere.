@@ -1,16 +1,13 @@
+import { pineconeClient } from "@/lib/pinecone";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/server/db/db";
 import { file } from "@/server/db/schema";
-import { api } from "@/trpc/server";
-import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
-import {PDFLoader} from 'langchain/document_loaders/fs/pdf';
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
-import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
-import { pineconeClient } from "@/lib/pinecone";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { PineconeStore } from "@langchain/pinecone";
 import { eq } from "drizzle-orm";
+import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
+import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
 
@@ -44,7 +41,6 @@ export const ourFileRouter = {
 
 				const pageLevelDocs = await loader.load();
 
-				const pageAmt = pageLevelDocs.length;
 				
 				const pineconeIndex = pineconeClient.index('pdfspace');
 				

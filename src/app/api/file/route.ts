@@ -24,6 +24,10 @@ export const DELETE = async (req: NextRequest) => {
 		let file: fileType | null = null;
 		file = await api.file.getUserFile({ id: String(id) });
 
+		if(!file){
+			throw new TRPCError({ code: "NOT_FOUND" });
+		}
+
 		const uploadThing = new UTApi();
 		const pineconeIndex = pineconeClient.index("pdfspace");
 
@@ -33,12 +37,17 @@ export const DELETE = async (req: NextRequest) => {
 			throw new Error("Failed to delete file");
 		}
 
-		await pineconeIndex._deleteOne(file.id.toString());
+		console.log(file.id.toString());
+
+		await pineconeIndex.namespace(file.id.toString()).deleteAll();
+
+		//await pineconeIndex._deleteOne(file.id.toString());
 
 		await api.file.deleteFile({ id: String(id) });
 
 		return new Response(undefined, { status: 200 });
 	} catch (e: any) {
+		console.log(e);
 		if (e instanceof TRPCError) {
 			if (e.code === "NOT_FOUND") {
 				return new Response("NOT_FOUND", { status: 400 });
