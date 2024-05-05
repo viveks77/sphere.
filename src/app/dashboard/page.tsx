@@ -49,7 +49,7 @@ const Dashboard = () => {
 				)}
 			</div>
 			<div className="text-center text-sm text-zinc-500 py-2 absolute bottom-0 left-0 w-full">
-				Files inactive for 10days will be deleted.
+				Files inactive for 10days will be deleted automatically.
 			</div>
 		</main>
 	);
