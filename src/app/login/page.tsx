@@ -15,7 +15,7 @@ import { z } from "zod";
 
 const loginSchema = z.object({
 	email: z.string().email(),
-	password: z.string().min(4, {message: "Password must be at least 4 characters"}),
+	password: z.string().min(4, { message: "Password must be at least 4 characters" }),
 });
 
 export default function LoginPage() {
@@ -44,24 +44,38 @@ export default function LoginPage() {
 		},
 	});
 
+	function resetFields() {
+		form.reset();
+		setIsSignup(!isSignup);
+	}
+
 	async function submit(values: z.infer<typeof loginSchema>) {
 		setButtonLoading(true);
 
-		if(isSignup){
-			const {error} = await supabase.auth.signUp(values);
-			if (error) {
+		try {
+			const response = await fetch(`/api/user/${isSignup ? "register" : "login"}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(values),
+			});
+
+			const json = await response.json();
+			const status = response.status;
+			if (status != 200) {
 				form.setError("email", {
-					message: error.message
-				})
+					message: json.message,
+				});
 				setButtonLoading(false);
 				return;
 			}
-		}else {
-			const { error } = await supabase.auth.signInWithPassword(values);
-			if (error) {
-				setButtonLoading(false);
-				return;
-			}
+		} catch (e: any) {
+			form.setError("email", {
+				message: e.message,
+			});
+			setButtonLoading(false);
+			return;
 		}
 
 		router.replace("/dashboard");
@@ -72,7 +86,7 @@ export default function LoginPage() {
 		<>
 			{loading ? (
 				<div className="mt-[8rem]">
-					<Loader2 className='mx-auto my-auto h-6 w-6 animate-spin'/>
+					<Loader2 className="mx-auto my-auto h-6 w-6 animate-spin" />
 				</div>
 			) : (
 				<Card className="mx-auto max-w-sm mt-[8rem]">
@@ -114,14 +128,20 @@ export default function LoginPage() {
 									)}
 								/>
 								<Button type="submit" className="w-full">
-									{buttonLoading ? <Loader2 className="mx-auto my-auto h-6 w-6 animate-spin" /> : isSignup ? "Register" : "Login"}
+									{buttonLoading ? (
+										<Loader2 className="mx-auto my-auto h-6 w-6 animate-spin" />
+									) : isSignup ? (
+										"Register"
+									) : (
+										"Login"
+									)}
 								</Button>
 							</form>
 						</Form>
 						<div className="mt-4 text-center text-sm">
-							{!isSignup ? "Don't have" : "Have" } an account?{" "}
-							<Link href="#" className="underline" onClick={() => setIsSignup(!isSignup)}>
-								{isSignup? "Login" : "Sign Up"}
+							{!isSignup ? "Don't have" : "Have"} an account?{" "}
+							<Link href="#" className="underline" onClick={resetFields}>
+								{isSignup ? "Login" : "Sign Up"}
 							</Link>
 						</div>
 					</CardContent>

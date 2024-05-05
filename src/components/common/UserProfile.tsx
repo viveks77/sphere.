@@ -7,17 +7,29 @@ import { useRouter } from "next/navigation";
 import { CircleUserRound, UserIcon } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useToast } from "../ui/use-toast";
 
 type props = {
 	user: User;
 };
 
 const UserProfile = ({ user }: props) => {
-	const supabase = createClient();
+	const { toast, dismiss } = useToast();
 
 	const router = useRouter();
 	const signOut = async () => {
-		await supabase.auth.signOut();
+		toast({
+			title: "Logging you out",
+		});
+		const response = await fetch("/api/user/logout");
+		if (!response.ok) {
+			console.log(response.statusText);
+			return;
+		}
+		dismiss();
+		toast({
+			title: "You have been logged out.",
+		});
 		router.refresh();
 	};
 
@@ -29,14 +41,14 @@ const UserProfile = ({ user }: props) => {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
-        <DropdownMenuItem className="mb-1">
-          <strong>{user.email}</strong>
-        </DropdownMenuItem>
-        <hr />
-        <DropdownMenuItem className="mt-1" onClick={signOut}>
-          Signout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
+				<DropdownMenuItem className="mb-1">
+					<strong>{user.email}</strong>
+				</DropdownMenuItem>
+				<hr />
+				<DropdownMenuItem className="mt-1" onClick={signOut}>
+					Signout
+				</DropdownMenuItem>
+			</DropdownMenuContent>
 		</DropdownMenu>
 	);
 };
