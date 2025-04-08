@@ -29,5 +29,5 @@ Here are some screenshots of the Sphere application:
 
 **Question Answering Interface:**
 
-![Question Answering Screenshot](./screenshots/sphere-chat.png) *(Replace with actual link)*
+![Question Answering Screenshot](./screenshots/sphere-chat.png)
 
