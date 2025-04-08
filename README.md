@@ -11,9 +11,7 @@ Sphere is a web application that leverages the power of AI to enable seamless in
 *   **Next.js Frontend:** Enjoy a fast and responsive user experience with a modern React-based frontend.
 *   **TRPC API:** Benefit from type-safe API interactions between the frontend and backend.
 *   **Langchain Integration:** Harness the capabilities of Langchain for advanced language processing tasks.
-*   **Uploadthing Integration:** Simplify file uploads with Uploadthing.
 *   **Supabase Authentication:** Secure user authentication with Supabase.
-*   **Radix UI:** Beautiful and accessible UI components with Radix UI.
 
 ## 🖼️ Screenshots
 
